@@ -21,4 +21,3 @@ This project is a full-stack event management application that allows users to c
 - 2.Stripe Integration
 - 5.Stop registration when the date is passed
 
-(p.s. i know i have to optimize this very much will do it)
