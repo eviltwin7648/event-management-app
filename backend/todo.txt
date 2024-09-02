@@ -1,0 +1,46 @@
+Objective:
+Build a basic Event Management API where users can create and manage events. The system should allow users to:
+
+Register and authenticate.
+Create, update, and delete events.
+RSVP to events.
+View a list of events they have RSVP'd to.
+
+
+API Endpoints: Implement the following routes in your Express application:
+
+User Authentication:
+POST /register: Register a new user.  
+POST /login: Authenticate and log in a user. 
+
+
+Event Management:
+POST /events: Create a new event (authenticated users only).
+PUT /events/:id: Update an existing event (only by the organizer).
+DELETE /events/:id: Delete an event (only by the organizer).
+GET /events: Fetch a list of all events.
+GET /events/:id: Fetch details of a specific event.
+
+
+
+RSVP Management:
+POST /events/:id/rsvp: RSVP to an event (authenticated users only).
+GET /users/:id/rsvps: Fetch a list of events the user has RSVP'd to.
+
+Validation: Use Zod for request validation. Ensure that the data being sent to the API (like event creation or RSVP status) is validated using Zod schemas.
+
+Authentication: Implement basic JWT-based authentication. Protect routes that require authentication, like creating or updating events and RSVPing.
+
+Environment Setup:
+
+Set up a PostgreSQL database.
+Configure Prisma to connect to your PostgreSQL instance.
+Use dotenv to manage environment variables like the database connection string and JWT secret.
+
+
+BOOKMARK
+
+Bonus Features (Optional):
+Add pagination to the events list.
+Allow users to upload an image for an event.
+Send email notifications when a user RSVPs to an event.
