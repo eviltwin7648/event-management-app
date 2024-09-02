@@ -19,4 +19,6 @@ This project is a full-stack event management application that allows users to c
 - 3.categories of event
 - 4.Price of Event
 - 2.Stripe Integration
-- 5.Stop registration when the date is passed 
+- 5.Stop registration when the date is passed
+
+(p.s. i know i have to optimize this very much will do it)
