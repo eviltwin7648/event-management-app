@@ -23,7 +23,7 @@ const authenticate = function (req, res, next) {
     }
     catch (error) {
         return res.status(403).json({
-            message: "Invalid Token",
+            message: "Wrong User",
         });
     }
 };

@@ -8,6 +8,8 @@ interface CreateEventType {
   eventTitle: string;
   description: string;
   date: string;
+  category: string;
+  price: number;
 }
 interface SignUpDataType {
   username: string;
@@ -26,8 +28,7 @@ interface UpdateUserType {
 
 const token = localStorage.getItem("token");
 const fulltoken = `Bearer ${token}`;
-const APIURL = "http://localhost:3000"
-
+const APIURL = "http://localhost:3000";
 
 export const loginCall = async ({ email, password }: LoginDataType) => {
   const response = await axios.post("http://localhost:3000/user/login", {
@@ -42,13 +43,17 @@ export const createEventCall = async ({
   eventTitle,
   description,
   date,
+  category,
+  price,
 }: CreateEventType) => {
   const response = await axios.post(
-    `${APIURL}/events` ,
+    `${APIURL}/events`,
     {
       eventTitle,
       description,
       date,
+      category,
+      price,
     },
     {
       headers: {
@@ -109,7 +114,9 @@ export const updateUserCall = async ({
 
 export const registerEventCall = async (eventId: string) => {
   const response = await axios.post(
-    `${APIURL}/events/${eventId}/rsvp`,{},{
+    `${APIURL}/events/${eventId}/rsvp`,
+    {},
+    {
       headers: {
         authorization: fulltoken,
       },
@@ -118,16 +125,18 @@ export const registerEventCall = async (eventId: string) => {
   return response.data;
 };
 
-export const unRegisterEventCall = async(eventId: string)=>{
+export const unRegisterEventCall = async (eventId: string) => {
   const response = await axios.post(
-    `${APIURL}/events/${eventId}/unrsvp`,{},{
+    `${APIURL}/events/${eventId}/unrsvp`,
+    {},
+    {
       headers: {
         authorization: fulltoken,
       },
     }
   );
   return response.data;
-}
+};
 
 export const getRegisteredEventsCall = async () => {
   const response = await axios.get(`${APIURL}/user/rsvp`, {
@@ -136,24 +145,34 @@ export const getRegisteredEventsCall = async () => {
     },
   });
   return response.data;
-
 };
 
-export const deleteEventCall = async (eventId:number) =>{
-  const response = await axios.delete(`${APIURL}/events/${eventId}`,{headers:{
-    authorization:fulltoken
-  }},)
-console.log(response)
-  return response.data
-}
+export const deleteEventCall = async (eventId: number) => {
+  const response = await axios.delete(`${APIURL}/events/${eventId}`, {
+    headers: {
+      authorization: fulltoken,
+    },
+  });
+  console.log(response);
+  return response.data;
+};
 
-export const getEventsByUserCall = async()=>{
-const response = await axios.get(`${APIURL}/user/alluserevents`,{
-  headers:{
-      authorization:fulltoken
-  }
-})
-return response.data
-} 
+export const getEventsByUserCall = async () => {
+  const response = await axios.get(`${APIURL}/user/alluserevents`, {
+    headers: {
+      authorization: fulltoken,
+    },
+  });
+  return response.data;
+};
 
-
+export const getEventDetailsCall = async (eventId: string) => {
+  console.log(eventId)
+  const response = await axios.get(`${APIURL}/events/${eventId}`, {
+    headers: {
+      authorization: fulltoken,
+    },
+  });
+console.log("something", response)
+  return response.data;
+};

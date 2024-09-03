@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import CreateEventPage from "./pages/CreateEventPage";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import PublicRoute from "./utils/PublicRoute";
+import EventDetails from "./pages/EventDetails";
 
 function App() {
   return (
@@ -48,6 +49,14 @@ function App() {
             element={
               <ProtectedRoutes>
                 <EditEvents />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="/event/:eventId"
+            element={
+              <ProtectedRoutes>
+                <EventDetails />
               </ProtectedRoutes>
             }
           />

@@ -4,7 +4,7 @@ import {
   createNewEvent,
   deleteEvent,
   getAllEvents,
-    getEventById,
+  getEventById,
   updateEvent,
 } from "../controllers/eventController";
 import { authenticate } from "../middlewares/authenticate";
@@ -19,11 +19,16 @@ const router = Router();
 router.post("/", authenticate, async (req, res) => {
   const date = new Date(req.body.date);
   console.log(date);
+  console.log(req.body.date);
+  const price = parseInt(req.body.price);
+
   const { success, error } = eventSchema.safeParse({
     eventTitle: req.body.eventTitle,
     description: req.body.description,
     date: date,
     organizerId: req.body.organizerId,
+    category: req.body.category,
+    price: price,
   });
   if (!success) {
     return res.status(411).json({
@@ -32,7 +37,14 @@ router.post("/", authenticate, async (req, res) => {
     });
   }
   try {
-    const event = await createNewEvent(req.body);
+    const event = await createNewEvent({
+      eventTitle: req.body.eventTitle,
+      description: req.body.description,
+      date: date,
+      organizerId: req.body.organizerId,
+      category: req.body.category,
+      price: price,
+    });
     res.json({
       message: "Event created Successfully",
       event,
@@ -158,7 +170,5 @@ router.post("/:id/unrsvp", authenticate, async (req, res) => {
       .json({ message: "Error occurred while UnRegistring", error });
   }
 });
-
-
 
 export default router;

@@ -19,11 +19,15 @@ const router = (0, express_1.Router)();
 router.post("/", authenticate_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const date = new Date(req.body.date);
     console.log(date);
+    console.log(req.body.date);
+    const price = parseInt(req.body.price);
     const { success, error } = eventSchema_1.eventSchema.safeParse({
         eventTitle: req.body.eventTitle,
         description: req.body.description,
         date: date,
         organizerId: req.body.organizerId,
+        category: req.body.category,
+        price: price,
     });
     if (!success) {
         return res.status(411).json({
@@ -32,7 +36,14 @@ router.post("/", authenticate_1.authenticate, (req, res) => __awaiter(void 0, vo
         });
     }
     try {
-        const event = yield (0, eventController_1.createNewEvent)(req.body);
+        const event = yield (0, eventController_1.createNewEvent)({
+            eventTitle: req.body.eventTitle,
+            description: req.body.description,
+            date: date,
+            organizerId: req.body.organizerId,
+            category: req.body.category,
+            price: price,
+        });
         res.json({
             message: "Event created Successfully",
             event,

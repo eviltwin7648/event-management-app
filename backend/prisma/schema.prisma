@@ -26,9 +26,11 @@ model User {
 
 model Event {
   id          Int          @id @default(autoincrement())
-  eventTitle  String      @unique
+  eventTitle  String       @unique
   description String?
+  category    String       @default("Something")
   date        DateTime
+  price       Int          @default(0)
   organiser   User         @relation("UserEvents", fields: [organizerId], references: [id])
   organizerId Int
   registered  Registered[]

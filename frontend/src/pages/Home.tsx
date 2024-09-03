@@ -2,20 +2,23 @@ import { useEffect, useState } from "react";
 import EventCard from "../components/EventCard";
 import { getAllEvents } from "../api/api";
 
+interface Event {
+  id: string;
+  eventTitle: string;
+  description: string;
+  date: string;
+  category: string;
+  price: number;
+}
+
 const Home = () => {
   const [loading, setLoading] = useState(true);
 
-  interface Event {
-    id: string; // or number, depending on your backend
-    eventTitle: string;
-    description: string;
-    date: string; // or Date, depending on how you handle dates
-  }
   const [events, setEvents] = useState<Event[]>([]);
   useEffect(() => {
     getAllEvents().then((data) => {
       setEvents(data.events);
-      setLoading(false)
+      setLoading(false);
     });
   }, []);
 
@@ -51,14 +54,12 @@ const Home = () => {
                 stay updated.
               </li>
             </ul>
-        
           </div>
         </div>
 
-          <h4 className="text-4xl font-bold text-center my-8">Explore Events:</h4>
+        <h4 className="text-4xl font-bold text-center my-8">Explore Events:</h4>
         <div className="flex flex-row flex-wrap align-middle items-center justify-center ">
-          {   loading?(<p className="text-white">Loading...</p>):("")
-          }
+          {loading ? <p className="text-white">Loading...</p> : ""}
           {events.map((event) => (
             <EventCard
               title={event.eventTitle}
@@ -66,7 +67,9 @@ const Home = () => {
               description={event.description}
               date={event.date}
               registered={false}
-              eventId = {event.id}
+              eventId={event.id}
+              price={event.price}
+              category={event.category}
             />
           ))}
         </div>

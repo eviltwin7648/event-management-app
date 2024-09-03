@@ -18,7 +18,7 @@ exports.getAllEventsByUserID = getAllEventsByUserID;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 function createNewEvent(_a) {
-    return __awaiter(this, arguments, void 0, function* ({ eventTitle, description, date, organizerId, }) {
+    return __awaiter(this, arguments, void 0, function* ({ eventTitle, description, date, organizerId, category, price }) {
         try {
             const res = yield prisma.event.create({
                 data: {
@@ -26,6 +26,8 @@ function createNewEvent(_a) {
                     description,
                     date,
                     organizerId,
+                    category,
+                    price
                 },
             });
             return res;
