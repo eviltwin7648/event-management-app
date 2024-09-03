@@ -25,6 +25,9 @@ This is the frontend for the Event Management App, built with React.js, TypeScri
 - Stripe Integration: Implement payment processing with Stripe.
 - Categories and Pricing: Add categories and pricing for events.
 - Stop Registration: Automatically stop registration when the event date has passed.
-- Add react-hook-form: For managing form state and validation. 
+- Add react-hook-form: For managing form state and validation.
+
+(p.s. i know i have to optimize this very much will do it)
+
 
 
