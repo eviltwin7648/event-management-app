@@ -18,3 +18,4 @@ This project is a full-stack event management application that allows users to c
 - 1.Image Upload for Events
 - 2.Stripe Integration
 - 5.Stop registration when the date is passed 
+- a lot of optimization (mainly on frontend)
