@@ -8,8 +8,8 @@ interface EventCardTypes {
   registered?: boolean;
   imagePath?: string;
   eventId: string;
-  category: string;
-  price: number;
+  category?: string;
+  price?: number;
 }
 
 const EventCard = ({
@@ -17,7 +17,6 @@ const EventCard = ({
   description,
   date,
   imagePath,
-
   eventId,
   category,
   price,
