@@ -11,8 +11,7 @@ require("dotenv").config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-// app.use('/uploads',express.static('/uploads'))
-app.use('/uploads', express_1.default.static('C:/Users/visha/Desktop/event_management-app/backend/src/uploads'));
+app.use('/uploads', express_1.default.static('./uploads'));
 app.use("/user", userRoute_1.default);
 app.use("/events", eventRoute_1.default);
 const PORT = process.env.PORT || 3000;

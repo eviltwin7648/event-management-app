@@ -28,7 +28,7 @@ interface UpdateUserType {
 
 const token = localStorage.getItem("token");
 const fulltoken = `Bearer ${token}`;
-const APIURL = "https://event-management-app-1-h2ke.onrender.com";
+const APIURL = import.meta.env.VITE_API_URL;
 
 export const loginCall = async ({ email, password }: LoginDataType) => {
   const response = await axios.post("http://localhost:3000/user/login", {

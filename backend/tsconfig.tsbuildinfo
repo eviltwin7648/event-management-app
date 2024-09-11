@@ -1,0 +1,1 @@
+{"root":["./src/app.ts","./src/controllers/eventcontroller.ts","./src/controllers/registercontroller.ts","./src/controllers/usercontroller.ts","./src/middlewares/authenticate.ts","./src/middlewares/authorizeorganizer.ts","./src/routes/eventroute.ts","./src/routes/userroute.ts","./src/types/express.d.ts","./src/zod/eventschema.ts","./src/zod/userschema.ts"],"version":"5.6.2"}

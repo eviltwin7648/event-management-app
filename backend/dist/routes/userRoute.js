@@ -116,8 +116,11 @@ router.put("/edit", authenticate_1.authenticate, (req, res) => __awaiter(void 0,
                 error,
             });
         }
+        if (!req.userId) {
+            return res.json({ message: "Wrong User" });
+        }
         const user = yield (0, userController_1.updateUser)({
-            id: req.body.userId,
+            id: req.userId,
             username: req.body.username,
             password: req.body.password,
             firstName: req.body.firstName,

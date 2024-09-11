@@ -85,7 +85,7 @@ const EventCard = ({
       <a href="#">
         <img
           className="rounded-t-lg"
-          src={`http://localhost:3000/uploads/${imagePath}`}
+          src={`${import.meta.env.VITE_API_KEY}/uploads/${imagePath}`}
           alt="image"
         />
       </a>
