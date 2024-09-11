@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { deleteEventCall } from "../api/api";
+import { deleteEventCall } from "../services/api";
 
 interface EventListTypes {
   title: string;

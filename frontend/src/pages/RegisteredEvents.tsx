@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getRegisteredEventsCall } from "../api/api";
+import { getRegisteredEventsCall } from "../services/api";
 import EventCard from "../components/EventCard";
 
 interface RegisteredEventsType {

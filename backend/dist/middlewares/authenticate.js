@@ -17,8 +17,8 @@ const authenticate = function (req, res, next) {
         }
         const token = authHeader.split(" ")[1];
         const decode = jsonwebtoken_1.default.verify(token, process.env.JWT_SCERET);
-        req.body.userId = parseInt(decode.userId);
-        req.body.organizerId = parseInt(decode.userId);
+        req.userId = parseInt(decode.userId);
+        req.organizerId = parseInt(decode.userId);
         next();
     }
     catch (error) {

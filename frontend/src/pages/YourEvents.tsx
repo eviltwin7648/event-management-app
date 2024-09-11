@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import EventList from "../components/EventList";
-import { getEventsByUserCall } from "../api/api";
+import { getEventsByUserCall } from "../services/api";
 
 interface UserEventsType {
   id: number;

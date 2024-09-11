@@ -8,7 +8,7 @@ export const authorizeOrganizer = async function (
 ) {
   try {
     const eventId = parseInt(req.params.id);
-    const userId = parseInt(req.body.userId);
+    const userId = req.userId;
 
     const event = await getEventById(eventId);
 

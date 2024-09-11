@@ -15,7 +15,7 @@ const authorizeOrganizer = function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const eventId = parseInt(req.params.id);
-            const userId = parseInt(req.body.userId);
+            const userId = req.userId;
             const event = yield (0, eventController_1.getEventById)(eventId);
             if (!event) {
                 return res.json("Event Does not Exist");

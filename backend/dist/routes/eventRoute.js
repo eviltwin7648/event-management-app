@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const eventSchema_1 = require("../zod/eventSchema");
@@ -15,17 +18,30 @@ const eventController_1 = require("../controllers/eventController");
 const authenticate_1 = require("../middlewares/authenticate");
 const authorizeOrganizer_1 = require("../middlewares/authorizeOrganizer");
 const registerController_1 = require("../controllers/registerController");
+const multer_1 = __importDefault(require("multer"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
+//multer to handle image upload
+const storage = multer_1.default.memoryStorage();
+const upload = (0, multer_1.default)({ storage: storage }).single("image");
 const router = (0, express_1.Router)();
-router.post("/", authenticate_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// create the event
+//also accepting Image (how tf do i modify it store and then save a ref to the db)
+//do i send formData from the frontend (will json not work?i dont suppose we can do images in json.)
+router.post("/", authenticate_1.authenticate, upload, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const date = new Date(req.body.date);
-    console.log(date);
-    console.log(req.body.date);
     const price = parseInt(req.body.price);
+    console.log(req.body);
+    console.log((_a = req.file) === null || _a === void 0 ? void 0 : _a.filename);
+    if (req.organizerId == undefined) {
+        return res.json({ message: "Wrong Input" });
+    }
     const { success, error } = eventSchema_1.eventSchema.safeParse({
         eventTitle: req.body.eventTitle,
         description: req.body.description,
         date: date,
-        organizerId: req.body.organizerId,
+        organizerId: req.organizerId,
         category: req.body.category,
         price: price,
     });
@@ -36,13 +52,33 @@ router.post("/", authenticate_1.authenticate, (req, res) => __awaiter(void 0, vo
         });
     }
     try {
+        if (req.file == undefined) {
+            return res.json({
+                message: "No Image Found",
+            });
+        }
+        const fileName = req.file.fieldname +
+            "_" +
+            Date.now() +
+            path_1.default.extname(req.file.originalname);
+        const imagePath = `src/uploads/${fileName}`;
+        try {
+            fs_1.default.writeFileSync(imagePath, req.file.buffer);
+        }
+        catch (err) {
+            return res.status(500).json({
+                message: "Error saving file",
+                error: err,
+            });
+        }
         const event = yield (0, eventController_1.createNewEvent)({
             eventTitle: req.body.eventTitle,
             description: req.body.description,
             date: date,
-            organizerId: req.body.organizerId,
+            organizerId: req.organizerId,
             category: req.body.category,
             price: price,
+            imagePath: fileName,
         });
         res.json({
             message: "Event created Successfully",
@@ -56,6 +92,8 @@ router.post("/", authenticate_1.authenticate, (req, res) => __awaiter(void 0, vo
         });
     }
 }));
+//update the event
+//also add image field
 router.put("/:id", authenticate_1.authenticate, authorizeOrganizer_1.authorizeOrganizer, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const date = new Date(req.body.date);
     const eventId = parseInt(req.params.id);
@@ -90,6 +128,7 @@ router.put("/:id", authenticate_1.authenticate, authorizeOrganizer_1.authorizeOr
         });
     }
 }));
+//delete the event
 router.delete("/:id", authenticate_1.authenticate, authorizeOrganizer_1.authorizeOrganizer, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const eventId = parseInt(req.params.id);
     try {
@@ -105,6 +144,8 @@ router.delete("/:id", authenticate_1.authenticate, authorizeOrganizer_1.authoriz
         });
     }
 }));
+//get all events
+//modify to send image also
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const events = yield (0, eventController_1.getAllEvents)();
@@ -117,6 +158,8 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: "Error getting Events", error });
     }
 }));
+//get event by their Id
+//modify to send image also
 router.get("/:id", authenticate_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const eventId = parseInt(req.params.id);
@@ -133,10 +176,14 @@ router.get("/:id", authenticate_1.authenticate, (req, res) => __awaiter(void 0, 
         });
     }
 }));
+//register for an event
 router.post("/:id/rsvp", authenticate_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //register for the event
     try {
-        const userId = parseInt(req.body.userId);
+        const userId = req.userId;
+        if (!userId) {
+            return res.json({ message: "Wrong User" });
+        }
         const eventId = parseInt(req.params.id);
         const registered = yield (0, registerController_1.registerEvent)(userId, eventId);
         res.json({ message: "Registered Successfully", registered });
@@ -146,10 +193,14 @@ router.post("/:id/rsvp", authenticate_1.authenticate, (req, res) => __awaiter(vo
         res.status(500).json({ message: "Error occurred while Registring", error });
     }
 }));
+//unregister from an evnet
 router.post("/:id/unrsvp", authenticate_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //unregister for the event
     try {
-        const userId = parseInt(req.body.userId);
+        const userId = req.userId;
+        if (!userId) {
+            return res.json({ message: "Wrong User" });
+        }
         const eventId = parseInt(req.params.id);
         const registered = yield (0, registerController_1.unRegisterEvent)(userId, eventId);
         res.json({ message: "UnRegistered Successfully", registered });

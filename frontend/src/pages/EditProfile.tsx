@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { updateUserCall } from "../api/api";
+import { updateUserCall } from "../services/api";
 
 const EditProfile = () => {
   const [firstName, setFirstName] = useState("");

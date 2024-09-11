@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { signUpCall } from "../api/api";
+import { signUpCall } from "../services/api";
 
 const SignUp = () => {
   const [firstName, setFirstName] = useState("");

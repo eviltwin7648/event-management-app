@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import EventCard from "../components/EventCard";
-import { getAllEvents } from "../api/api";
+import { getAllEvents } from "../services/api";
 
 interface Event {
   id: string;
   eventTitle: string;
+  imagePath: string;
   description: string;
   date: string;
   category: string;
@@ -62,6 +63,7 @@ const Home = () => {
           {loading ? <p className="text-white">Loading...</p> : ""}
           {events.map((event) => (
             <EventCard
+              imagePath={event.imagePath}
               title={event.eventTitle}
               key={event.id}
               description={event.description}

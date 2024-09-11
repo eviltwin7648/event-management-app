@@ -8,7 +8,8 @@ interface NewEventType {
   date: Date;
   organizerId: number;
   category:string;
-  price:number
+  price:number;
+  imagePath:string
 }
 
 interface UpdateEventType {
@@ -24,7 +25,8 @@ export async function createNewEvent({
   date,
   organizerId,
   category,
-  price
+  price,
+  imagePath
 }: NewEventType) {
   try {
     const res = await prisma.event.create({
@@ -34,7 +36,8 @@ export async function createNewEvent({
         date,
         organizerId,
         category,
-        price
+        price,
+        imagePath
       },
     });
     return res;

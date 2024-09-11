@@ -91,7 +91,10 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 router.get("/rsvp", authenticate_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const userId = parseInt(req.body.userId);
+        const userId = req.userId;
+        if (!userId) {
+            return res.json({ message: "Wrong User" });
+        }
         const events = yield (0, registerController_1.getAllRegisteredEvents)(userId);
         if (events.length == 0) {
             return res.json({ message: "No Events Found" });
@@ -127,7 +130,10 @@ router.put("/edit", authenticate_1.authenticate, (req, res) => __awaiter(void 0,
     }
 }));
 router.get("/alluserevents", authenticate_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = parseInt(req.body.userId);
+    const id = req.userId;
+    if (!id) {
+        return res.json({ message: "Wrong User" });
+    }
     try {
         const events = yield (0, eventController_1.getAllEventsByUserID)(id);
         if (events.length == 0) {

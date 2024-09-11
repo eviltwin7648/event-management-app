@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 require("dotenv").config();
 
+
 export const authenticate = function (
   req: Request,
   res: Response,
@@ -21,8 +22,8 @@ export const authenticate = function (
     const decode = jwt.verify(token, process.env.JWT_SCERET as string) as {
       userId: string;
     };
-    req.body.userId = parseInt(decode.userId)
-    req.body.organizerId = parseInt(decode.userId);
+    req.userId = parseInt(decode.userId);
+    req.organizerId = parseInt(decode.userId);
     next();
   } catch (error) {
     return res.status(403).json({

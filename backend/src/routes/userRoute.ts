@@ -65,7 +65,10 @@ router.post("/login", async (req, res) => {
 
 router.get("/rsvp", authenticate, async (req, res) => {
   try {
-    const userId = parseInt(req.body.userId);
+    const userId = req.userId;
+    if (!userId) {
+      return res.json({ message: "Wrong User" });
+    }
     const events = await getAllRegisteredEvents(userId);
     if (events.length == 0) {
       return res.json({ message: "No Events Found" });
@@ -87,8 +90,11 @@ router.put("/edit", authenticate, async (req, res) => {
         error,
       });
     }
+    if (!req.userId) {
+      return res.json({ message: "Wrong User" });
+    }
     const user = await updateUser({
-      id: req.body.userId,
+      id: req.userId,
       username: req.body.username,
       password: req.body.password,
       firstName: req.body.firstName,
@@ -101,7 +107,10 @@ router.put("/edit", authenticate, async (req, res) => {
 });
 
 router.get("/alluserevents", authenticate, async (req, res) => {
-  const id = parseInt(req.body.userId);
+  const id = req.userId;
+  if (!id) {
+    return res.json({ message: "Wrong User" });
+  }
   try {
     const events = await getAllEventsByUserID(id);
     if (events.length == 0) {

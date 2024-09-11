@@ -16,6 +16,15 @@ This project is a full-stack event management application that allows users to c
 
 # Pending Features
 - 1.Image Upload for Events
+//so now we can upload image while creating the event
+// we have to add function to update it also and send it to user also 
+
 - 2.Stripe Integration
-- 5.Stop registration when the date is passed 
+//
+
+- 3.Search and Sort Functionality
+//
+
+- 4.Stop registration when the date is passed 
+//
 - a lot of optimization (mainly on frontend)

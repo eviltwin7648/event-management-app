@@ -31,6 +31,7 @@ model Event {
   category    String       @default("Something")
   date        DateTime
   price       Int          @default(0)
+  imagePath   String       @default("")
   organiser   User         @relation("UserEvents", fields: [organizerId], references: [id])
   organizerId Int
   registered  Registered[]
