@@ -31,7 +31,7 @@ const fulltoken = `Bearer ${token}`;
 const APIURL = import.meta.env.VITE_API_URL;
 
 export const loginCall = async ({ email, password }: LoginDataType) => {
-  const response = await axios.post("http://localhost:3000/user/login", {
+  const response = await axios.post(`${APIURL}/user/login`, {
     email,
     password,
   });
