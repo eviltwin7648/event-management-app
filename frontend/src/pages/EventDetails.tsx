@@ -38,6 +38,9 @@ const EventDetails = () => {
     return;
   }
 
+  if (!eventId){
+    return
+  }
   const handleClick = () => {
     if (registered) {
       unRegisterEventCall(eventId).then((res) => {
