@@ -12,6 +12,7 @@ interface EventDetailsType {
   date: string;
   price: number;
   category: string;
+  imagePath:string
   organiser: {
     firstName: string;
     lastName: string;
@@ -77,7 +78,7 @@ const EventDetails = () => {
       <p className="text-gray-600 dark:text-gray-400 mb-2">
         Price: ₹ {eventDetail.price}
       </p>
-      <div className="">
+      <div>
         <p className="text-gray-600 dark:text-gray-400 ">
           {eventDetail.organiser.firstName}
         </p>
