@@ -1,16 +1,14 @@
 interface ButtonPropsType {
   title: string;
   link: string;
-  isActive: boolean;
+  onClick?:()=>void
 }
 
-const Button = ({ title, link, isActive }: ButtonPropsType) => {
+const Button = ({ title, link,onClick }: ButtonPropsType) => {
+  
+  if (onClick) onClick()
   return (
-    <div
-      className={`text-white rounded-md ${
-        isActive ? "bg-gray-700" : "bg-transparent"
-      }`}
-    >
+    <div className="bg-primary rounded-md py-2 px-4 text-white">
       <a href={link} className="px-4 py-2 block">
         {title}
       </a>

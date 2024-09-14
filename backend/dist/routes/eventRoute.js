@@ -61,7 +61,7 @@ router.post("/", authenticate_1.authenticate, upload, (req, res) => __awaiter(vo
             "_" +
             Date.now() +
             path_1.default.extname(req.file.originalname);
-        const imagePath = `src/uploads/${fileName}`;
+        const imagePath = `/src/uploads/${fileName}`;
         try {
             fs_1.default.writeFileSync(imagePath, req.file.buffer);
         }

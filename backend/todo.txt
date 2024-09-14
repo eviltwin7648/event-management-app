@@ -43,4 +43,11 @@ BOOKMARK
 Bonus Features (Optional):
 Add pagination to the events list.
 Allow users to upload an image for an event.
+
+
+
+
+
 Send email notifications when a user RSVPs to an event.
+
+//

@@ -63,7 +63,7 @@ router.post("/", authenticate, upload, async (req, res) => {
       "_" +
       Date.now() +
       path.extname(req.file.originalname);
-    const imagePath = `src/uploads/${fileName}`;
+    const imagePath = `/src/uploads/${fileName}`;
     try {
       fs.writeFileSync(imagePath, req.file.buffer);
     } catch (err) {

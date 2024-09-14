@@ -28,7 +28,9 @@ interface UpdateUserType {
 
 const token = localStorage.getItem("token");
 const fulltoken = `Bearer ${token}`;
+
 const APIURL = import.meta.env.VITE_API_URL;
+console.log(APIURL)
 
 export const loginCall = async ({ email, password }: LoginDataType) => {
   const response = await axios.post(`${APIURL}/user/login`, {

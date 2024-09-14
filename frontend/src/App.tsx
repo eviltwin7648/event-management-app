@@ -3,7 +3,6 @@ import "./App.css";
 import EditProfile from "./pages/EditProfile";
 import RegisteredEvents from "./pages/RegisteredEvents";
 import YourEvents from "./pages/YourEvents";
-import NavBar from "./components/NavBar";
 import EditEvents from "./pages/EditEvents";
 import Home from "./pages/Home";
 import SignUpPage from "./pages/SignUpPage";
@@ -17,7 +16,6 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route

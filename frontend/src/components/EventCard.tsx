@@ -24,88 +24,40 @@ const EventCard = ({
   // const [registere, setregistere] = useState(registered);
   const newDate = new Date(date);
   const formattedDate = format(newDate, "MMMM dd, yyyy");
-  console.log(imagePath);
+  const url = import.meta.env.VITE_API_URL;
+  console.log(url);
 
-  // const handleClick = () => {
-  //   if (registere) {
-  //     unRegisterEventCall(eventId).then((res) => {
-  //       console.log(res);
-  //       setregistere(() => !registere);
-  //     });
-  //   } else {
-  //     registerEventCall(eventId).then((res) => {
-  //       console.log(res);
-  //       setregistere(() => !registere);
-  //     });
-  //   }
-  // };
   return (
-    // <div className="w-96 m-5 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    //   <img className="" src={} alt="" />
-    //   <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-    //     {title}
-    //   </h5>
-    //   <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-    //     {category}
-    //   </p>
-
-    //   <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-    //     {}
-    //   </p>
-    //   <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-
-    //   </p>
-
-    //   <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-    //   </p>
-
-    //   {/* <button
-    //     onClick={handleClick}
-    //     className="inline-flex cursor-pointer items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    //   >
-    //     {registere ? "Unregister" : "Register Now"}
-    //     <svg
-    //       className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-    //       aria-hidden="true"
-    //       xmlns="http://www.w3.org/2000/svg"
-    //       fill="none"
-    //       viewBox="0 0 14 10"
-    //     >
-    //       <path
-    //         stroke="currentColor"
-    //         strokeLinecap="round"
-    //         strokeLinejoin="round"
-    //         strokeWidth="2"
-    //         d="M1 5h12m0 0L9 1m4 4L9 9"
-    //       />
-    //     </svg>
-    //   </button> */}
-    // </div>
-    <div className="w-96 m-5 p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-      <a href="#">
+    <div className="h-[400px] rounded-[10px] m-auto my-5 p-5 bg-white border shadow">
+      <div className="w-[347px]  relative h-[240px]">
         <img
-          className="rounded-t-lg"
-          src={`${import.meta.env.VITE_API_KEY}/uploads/${imagePath}`}
+          className="rounded-t-lg object-cover w-full h-full"
+          src={`${import.meta.env.VITE_API_URL}/uploads/${imagePath}`}
           alt="image"
         />
-      </a>
-      <div className="p-2">
-        <h5 className="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <p className="text-xs absolute top-2 left-2 bg-white text-primary bg-opacity-70 p-1 rounded">
+          {" "}
+          {price == 0 ? "FREE" : `₹${price}`}
+        </p>
+      </div>
+
+      <div className="flex flex-col justify-between h-28">
+        <h5 className=" text-base font-normal tracking-tight text-black ">
           {title}
         </h5>
-        <p>{category}</p>
+        {/* <p>{category}</p> */}
 
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+        {/* <p className="font-normal text-gray-700 dark:text-gray-400">
           {description}
-        </p>
-        <p className="pb-2"> {formattedDate}</p>
-        <p className="pb-2"> ₹ {price}</p>
-        <Link
+        </p> */}
+        <p className=" text-sm text-primary"> {formattedDate}</p>
+        <p className="text-gray-600">Location</p>
+        {/* <Link
           className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           to={`/event/${eventId}`}
         >
           View Details
-        </Link>
+        </Link> */}
       </div>
     </div>
   );

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import EventCard from "../components/EventCard";
 import { getAllEvents } from "../services/api";
-
+import HeroImage from "../assets/Hero.png";
+import Search from "../components/Search";
+import Button from "../components/Button";
+import NavBar from "../components/NavBar";
+import HomeCreateEvent from "../components/HomeCreateEvent";
 interface Event {
   id: string;
   eventTitle: string;
@@ -25,57 +29,40 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex flex-col     text-white ">
-        <div className="py-8 h-[600px] flex justify-between mx-auto text-center">
-          <div className="flex flex-col justify-center">
-            <h1 className="text-4xl font-bold mb-4">Welcome to Eventify!</h1>
-            <h4 className="text-lg text-gray-300 mb-6">
-              Discover, create, and manage events effortlessly with Eventify.
-              Whether you're an organizer or an attendee, we have all the tools
-              you need to make every event memorable.
-            </h4>
-          </div>
-          <div className="flex flex-col justify-center ">
-            <p className="text-xl font-semibold mb-4">What We Offer:</p>
-            <ul className="list-disc list-inside  mb-6 text-left mx-auto ">
-              <li className=" rounded ">
-                Event Creation: Easily set up and manage your events. Add
-                details, set dates, and make them stand out.
-              </li>
-              <li className="">
-                Registration Management: Track and manage attendee registrations
-                with ease.
-              </li>
-              <li className="  ">
-                Personal Dashboard: View and manage your created events and
-                registered events all in one place.
-              </li>
-              <li className="  ">
-                Seamless Integration: Connect with other users, view events, and
-                stay updated.
-              </li>
-            </ul>
-          </div>
+      <NavBar />
+      <div className="relative">
+        <img src={HeroImage} alt="hero-image" className="w-full h-auto" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+          <h1 className="text-7xl text-center font-bold mb-48">MADE FOR THOSE <br /> WHO DO</h1>
         </div>
-
-        <h4 className="text-4xl font-bold text-center my-8">Explore Events:</h4>
-        <div className="flex flex-row flex-wrap align-middle items-center justify-center ">
-          {loading ? <p className="text-white">Loading...</p> : ""}
-          {events.map((event) => (
-            <EventCard
-              imagePath={event.imagePath}
-              title={event.eventTitle}
-              key={event.id}
-              description={event.description}
-              date={event.date}
-              registered={false}
-              eventId={event.id}
-              price={event.price}
-              category={event.category}
-            />
-          ))}
+        <div className="absolute inset-x-0 bottom-0 transform translate-y-1/2 ">
+          <Search />
         </div>
       </div>
+
+      <h4 className="mt-36 text-4xl font-bold text-left my-8">
+        Upcoming <span className="text-primary">Events</span>
+      </h4>
+      <div className="flex flex-row flex-wrap align-middle items-center justify-center ">
+        {loading ? <p className="text-white">Loading...</p> : ""}
+        {events.map((event) => (
+          <EventCard
+            imagePath={event.imagePath}
+            title={event.eventTitle}
+            key={event.id}
+            description={event.description}
+            date={event.date}
+            registered={false}
+            eventId={event.id}
+            price={event.price}
+            category={event.category}
+          />
+        ))}
+      </div>
+      <div className="flex justify-center">
+        <Button title="Load More..." link="/" />
+      </div>
+      <HomeCreateEvent/>
     </>
   );
 };
