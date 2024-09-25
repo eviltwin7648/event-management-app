@@ -20,25 +20,24 @@ interface SignUpDataType {
 }
 
 interface UpdateUserType {
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 const token = localStorage.getItem("token");
 const fulltoken = `Bearer ${token}`;
 
 const APIURL = import.meta.env.VITE_API_URL;
-console.log(APIURL)
 
 export const loginCall = async ({ email, password }: LoginDataType) => {
   const response = await axios.post(`${APIURL}/user/login`, {
     email,
     password,
   });
-
   localStorage.setItem("token", response.data.token);
+  return response.data
 };
 
 export const createEventCall = async (formData: FormData) => {
@@ -48,7 +47,6 @@ export const createEventCall = async (formData: FormData) => {
       "Content-Type": "multipart/form-data",
     },
   });
-  console.log(response.data);
   return response.data;
 };
 
@@ -131,16 +129,16 @@ export const getRegisteredEventsCall = async () => {
       authorization: fulltoken,
     },
   });
+  console.log(response.data)
   return response.data;
 };
 
-export const deleteEventCall = async (eventId: number) => {
+export const deleteEventCall = async (eventId: string) => {
   const response = await axios.delete(`${APIURL}/events/${eventId}`, {
     headers: {
       authorization: fulltoken,
     },
   });
-  console.log(response);
   return response.data;
 };
 
@@ -154,12 +152,10 @@ export const getEventsByUserCall = async () => {
 };
 
 export const getEventDetailsCall = async (eventId: string) => {
-  console.log(eventId);
   const response = await axios.get(`${APIURL}/events/${eventId}`, {
     headers: {
       authorization: fulltoken,
     },
   });
-  console.log("something", response);
   return response.data;
 };

@@ -6,7 +6,8 @@ export const eventSchema = z.object({
   date: z.date(),
   organizerId: z.number(),
   category:z.string(),
-  price:z.number()
+  price:z.number(),
+  location:z.string()
 });
 
 export const updateEventSchema = z.object({

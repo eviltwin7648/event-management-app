@@ -20,7 +20,11 @@ const authorizeOrganizer_1 = require("../middlewares/authorizeOrganizer");
 const registerController_1 = require("../controllers/registerController");
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
+const stripe_1 = __importDefault(require("stripe"));
 const fs_1 = __importDefault(require("fs"));
+require("dotenv").config();
+const stripe = new stripe_1.default(process.env.STRIPE_SECRET);
+const endpointSecret = process.env.WEBHOOK_SECRET;
 //multer to handle image upload
 const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({ storage: storage }).single("image");
@@ -32,8 +36,9 @@ router.post("/", authenticate_1.authenticate, upload, (req, res) => __awaiter(vo
     var _a;
     const date = new Date(req.body.date);
     const price = parseInt(req.body.price);
+    console.log(req);
     console.log(req.body);
-    console.log((_a = req.file) === null || _a === void 0 ? void 0 : _a.filename);
+    console.log((_a = req.file) === null || _a === void 0 ? void 0 : _a.originalname);
     if (req.organizerId == undefined) {
         return res.json({ message: "Wrong Input" });
     }
@@ -44,6 +49,7 @@ router.post("/", authenticate_1.authenticate, upload, (req, res) => __awaiter(vo
         organizerId: req.organizerId,
         category: req.body.category,
         price: price,
+        location: req.body.location,
     });
     if (!success) {
         return res.status(411).json({
@@ -57,13 +63,13 @@ router.post("/", authenticate_1.authenticate, upload, (req, res) => __awaiter(vo
                 message: "No Image Found",
             });
         }
-        const fileName = req.file.fieldname +
+        const fileName = req.file.originalname +
             "_" +
             Date.now() +
             path_1.default.extname(req.file.originalname);
-        const imagePath = `/src/uploads/${fileName}`;
+        const imagePath = path_1.default.join(__dirname, "../../uploads", fileName);
         try {
-            fs_1.default.writeFileSync(imagePath, req.file.buffer);
+            yield fs_1.default.promises.writeFile(imagePath, req.file.buffer);
         }
         catch (err) {
             return res.status(500).json({
@@ -79,6 +85,7 @@ router.post("/", authenticate_1.authenticate, upload, (req, res) => __awaiter(vo
             category: req.body.category,
             price: price,
             imagePath: fileName,
+            location: req.body.location,
         });
         res.json({
             message: "Event created Successfully",
@@ -211,5 +218,63 @@ router.post("/:id/unrsvp", authenticate_1.authenticate, (req, res) => __awaiter(
             .status(500)
             .json({ message: "Error occurred while UnRegistring", error });
     }
+}));
+//stripe checkout route
+router.post("/create-checkout-session", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const YOUR_DOMAIN = process.env.YOUR_DOMAIN;
+    const session = yield stripe.checkout.sessions.create({
+        line_items: [
+            {
+                // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                // price: req.body.eventDetail.price,
+                price_data: {
+                    currency: "inr",
+                    product_data: {
+                        name: req.body.eventDetail.eventTitle,
+                    },
+                    unit_amount: req.body.eventDetail.price * 100,
+                },
+                quantity: 1,
+            },
+        ],
+        mode: "payment",
+        success_url: `${YOUR_DOMAIN}/`,
+        cancel_url: `${YOUR_DOMAIN}/eventdetails${req.body.eventDetail.id}`,
+        metadata: {
+            eventId: req.body.eventDetail.id,
+        },
+        client_reference_id: req.headers.token,
+    });
+    res.json(session.id);
+}));
+//stripe webhook
+router.post("/webhook", authenticate_1.extractUserIdFromToken, (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const sig = request.headers["stripe-signature"];
+    let event;
+    try {
+        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    }
+    catch (err) {
+        response.status(400).send(`Webhook Error: ${err}`);
+    }
+    if (!event) {
+        return response.status(400).send(`Webhook Error:`);
+    }
+    if (event.type === "checkout.session.completed") {
+        const session = event.data.object;
+        if (!session.metadata) {
+            return response.status(400).send(`Webhook Error:`);
+        }
+        const userId = request.userId;
+        const eventId = parseInt(session.metadata.eventId);
+        try {
+            yield (0, registerController_1.registerEvent)(userId, eventId);
+            console.log(`User ${userId} registered for event ${eventId}`);
+        }
+        catch (err) {
+            console.error("Error adding registration to database:", err);
+        }
+    }
+    response.json({ received: true });
 }));
 exports.default = router;

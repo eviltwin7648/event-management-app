@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticate = void 0;
+exports.extractUserIdFromToken = exports.authenticate = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require("dotenv").config();
 const authenticate = function (req, res, next) {
@@ -15,6 +15,7 @@ const authenticate = function (req, res, next) {
                 message: "Wrong Header",
             });
         }
+        console.log(req.body);
         const token = authHeader.split(" ")[1];
         const decode = jsonwebtoken_1.default.verify(token, process.env.JWT_SCERET);
         req.userId = parseInt(decode.userId);
@@ -28,3 +29,13 @@ const authenticate = function (req, res, next) {
     }
 };
 exports.authenticate = authenticate;
+const extractUserIdFromToken = (req, res, next) => {
+    const token = req.headers.token;
+    if (!token) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+    const decode = jsonwebtoken_1.default.verify(token, process.env.JWT_SCERET);
+    req.userId = parseInt(decode.userId); // Ensure the decoded object has a userId property
+    next();
+};
+exports.extractUserIdFromToken = extractUserIdFromToken;

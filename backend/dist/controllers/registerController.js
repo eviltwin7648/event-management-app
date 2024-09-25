@@ -64,6 +64,10 @@ function getAllRegisteredEvents(userId) {
                             eventTitle: true,
                             description: true,
                             date: true,
+                            imagePath: true,
+                            category: true,
+                            price: true,
+                            location: true
                         },
                     },
                 },

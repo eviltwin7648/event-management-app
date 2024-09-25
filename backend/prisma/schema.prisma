@@ -29,6 +29,7 @@ model Event {
   eventTitle  String       @unique
   description String?
   category    String       @default("Something")
+  location    String       @default("Somewhere")
   date        DateTime
   price       Int          @default(0)
   imagePath   String       @default("")

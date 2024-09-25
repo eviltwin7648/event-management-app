@@ -1,4 +1,4 @@
-import { json, Router } from "express";
+import { Router } from "express";
 import { eventSchema, updateEventSchema } from "../zod/eventSchema";
 import {
   createNewEvent,
@@ -7,7 +7,10 @@ import {
   getEventById,
   updateEvent,
 } from "../controllers/eventController";
-import { authenticate } from "../middlewares/authenticate";
+import {
+  authenticate,
+  extractUserIdFromToken,
+} from "../middlewares/authenticate";
 import { authorizeOrganizer } from "../middlewares/authorizeOrganizer";
 import {
   registerEvent,
@@ -15,8 +18,13 @@ import {
 } from "../controllers/registerController";
 import multer from "multer";
 import path from "path";
+import Stripe from "stripe";
 import fs from "fs";
+require("dotenv").config();
 
+const stripe = new Stripe(process.env.STRIPE_SECRET as string);
+
+const endpointSecret = process.env.WEBHOOK_SECRET as string;
 //multer to handle image upload
 
 const storage = multer.memoryStorage();
@@ -32,8 +40,9 @@ const router = Router();
 router.post("/", authenticate, upload, async (req, res) => {
   const date = new Date(req.body.date);
   const price = parseInt(req.body.price);
+  console.log(req);
   console.log(req.body);
-  console.log(req.file?.filename);
+  console.log(req.file?.originalname);
   if (req.organizerId == undefined) {
     return res.json({ message: "Wrong Input" });
   }
@@ -44,6 +53,7 @@ router.post("/", authenticate, upload, async (req, res) => {
     organizerId: req.organizerId,
     category: req.body.category,
     price: price,
+    location: req.body.location,
   });
   if (!success) {
     return res.status(411).json({
@@ -59,13 +69,14 @@ router.post("/", authenticate, upload, async (req, res) => {
     }
 
     const fileName =
-      req.file.fieldname +
+      req.file.originalname +
       "_" +
       Date.now() +
       path.extname(req.file.originalname);
-    const imagePath = `/src/uploads/${fileName}`;
+    const imagePath = path.join(__dirname, "../../uploads", fileName);
+
     try {
-      fs.writeFileSync(imagePath, req.file.buffer);
+      await fs.promises.writeFile(imagePath, req.file.buffer);
     } catch (err) {
       return res.status(500).json({
         message: "Error saving file",
@@ -81,6 +92,7 @@ router.post("/", authenticate, upload, async (req, res) => {
       category: req.body.category,
       price: price,
       imagePath: fileName,
+      location: req.body.location,
     });
     res.json({
       message: "Event created Successfully",
@@ -224,6 +236,73 @@ router.post("/:id/unrsvp", authenticate, async (req, res) => {
       .status(500)
       .json({ message: "Error occurred while UnRegistring", error });
   }
+});
+
+//stripe checkout route
+
+router.post("/create-checkout-session", async (req, res) => {
+  const YOUR_DOMAIN = process.env.YOUR_DOMAIN;
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        // price: req.body.eventDetail.price,
+        price_data: {
+          currency: "inr",
+          product_data: {
+            name: req.body.eventDetail.eventTitle,
+          },
+          unit_amount: req.body.eventDetail.price * 100,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${YOUR_DOMAIN}/`,
+    cancel_url: `${YOUR_DOMAIN}/eventdetails${req.body.eventDetail.id}`,
+    metadata: {
+      eventId: req.body.eventDetail.id,
+    },
+    client_reference_id: req.headers.token as string,
+  });
+
+  res.json(session.id);
+});
+
+//stripe webhook
+router.post("/webhook", extractUserIdFromToken, async (request, response) => {
+  const sig = request.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      request.body,
+      sig as string,
+      endpointSecret
+    );
+  } catch (err) {
+    response.status(400).send(`Webhook Error: ${err}`);
+  }
+
+  if (!event) {
+    return response.status(400).send(`Webhook Error:`);
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    if (!session.metadata) {
+      return response.status(400).send(`Webhook Error:`);
+    }
+    const userId = request.userId;
+    const eventId = parseInt(session.metadata.eventId);
+    try {
+      await registerEvent(userId as number, eventId);
+      console.log(`User ${userId} registered for event ${eventId}`);
+    } catch (err) {
+      console.error("Error adding registration to database:", err);
+    }
+  }
+  response.json({ received: true });
 });
 
 export default router;

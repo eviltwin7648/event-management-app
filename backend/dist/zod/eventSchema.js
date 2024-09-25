@@ -31,7 +31,8 @@ exports.eventSchema = z.object({
     date: z.date(),
     organizerId: z.number(),
     category: z.string(),
-    price: z.number()
+    price: z.number(),
+    location: z.string()
 });
 exports.updateEventSchema = z.object({
     eventTitle: z.string().min(1, "Event Title is Required").optional(),

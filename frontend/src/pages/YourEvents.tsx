@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import EventList from "../components/EventList";
 import { getEventsByUserCall } from "../services/api";
+import EventCard from "../components/EventCard";
 
 interface UserEventsType {
-  id: number;
+  id: string;
   eventTitle: string;
+  imagePath: string;
   description: string;
   date: string;
-  organizerId: 2;
+  category: string;
+  price: number;
+  location:string
 }
 
 const YourEvents = () => {
@@ -17,10 +20,10 @@ const YourEvents = () => {
 
   useEffect(() => {
     getEventsByUserCall().then((res) => {
-      if(res.message){
-        setMessage(res.message)
-        setLoading(false)
-        return
+      if (res.message) {
+        setMessage(res.message);
+        setLoading(false);
+        return;
       }
       setEvents(res.events);
       setLoading(false);
@@ -29,27 +32,31 @@ const YourEvents = () => {
   if (loading)
     return (
       <div className="flex justify-center min-h-screen items-center">
-        <p className="text-center  align-middle text-white">Loading...</p>;
+        <p className="text-center  align-middle ">Loading...</p>
       </div>
     );
-    if (message)
-      return (
-        <div className="flex flex-col justify-center min-h-screen items-center">
-          <p className="text-center  align-middle text-white">{message}</p><br />
-          <p className="text-center  align-middle text-white"> Create some events....</p>
-        </div>
-      );
-
+  if (message)
+    return (
+      <div className="flex flex-col justify-center min-h-screen items-center">
+        <p className="text-center  align-middle ">{message}</p>
+        <br />
+        <p className="text-center  align-middle "> Create some events....</p>
+      </div>
+    );
 
   return (
     <div className="flex flex-wrap">
       {events.map((event) => (
-        <EventList
+        <EventCard
+          location={event.location}
+          imagePath={event.imagePath}
           title={event.eventTitle}
+          key={event.id}
           description={event.description}
           date={event.date}
-          id={event.id}
-          key={event.id}
+          eventId={event.id}
+          price={event.price}
+          category={event.category}
         />
       ))}
     </div>

@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 require("dotenv").config();
 
-
 export const authenticate = function (
   req: Request,
   res: Response,
@@ -16,7 +15,8 @@ export const authenticate = function (
         message: "Wrong Header",
       });
     }
-    
+
+    console.log(req.body);
 
     const token = authHeader.split(" ")[1];
     const decode = jwt.verify(token, process.env.JWT_SCERET as string) as {
@@ -30,4 +30,21 @@ export const authenticate = function (
       message: "Wrong User",
     });
   }
+};
+
+export const extractUserIdFromToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = req.headers.token as string;
+
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const decode = jwt.verify(token, process.env.JWT_SCERET as string) as {
+    userId: string;
+  };
+  req.userId = parseInt(decode.userId); // Ensure the decoded object has a userId property
+  next();
 };
