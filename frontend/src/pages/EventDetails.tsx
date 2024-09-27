@@ -45,7 +45,7 @@ const EventDetails = () => {
     const stripe = await loadStripe(import.meta.env.VITE_STRIPE_SECRET);
 
     const response = await axios.post(
-      "http://localhost:3000/events/create-checkout-session",
+      `${import.meta.env.VITE_API_URL}/events/create-checkout-session`,
       {
         eventDetail,
       },
@@ -94,7 +94,7 @@ const EventDetails = () => {
       <div
         className="relative flex flex-row h-[595px]  p-12 rounded-lg text-white"
         style={{
-          backgroundImage: `url(http://localhost:3000/uploads/${eventDetail.imagePath})`,
+          backgroundImage: `url(${import.meta.env.VITE_API_URL}/uploads/${eventDetail.imagePath})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

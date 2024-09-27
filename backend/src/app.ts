@@ -8,9 +8,7 @@ import path from 'path'
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin:'https://event-management-app-eight.vercel.app',
-}));
+app.use(cors({origin:'https://event-management-app-eight.vercel.app'}));
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 console.log(path.join(__dirname, './uploads'))
