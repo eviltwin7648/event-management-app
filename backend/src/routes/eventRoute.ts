@@ -24,7 +24,6 @@ require("dotenv").config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET as string);
 
-const endpointSecret = process.env.WEBHOOK_SECRET as string;
 //multer to handle image upload
 
 const storage = multer.memoryStorage();
@@ -258,7 +257,7 @@ router.post("/create-checkout-session", async (req, res) => {
       },
     ],
     mode: "payment",
-    success_url: `${YOUR_DOMAIN}/`,
+    success_url: `${YOUR_DOMAIN}`,
     cancel_url: `${YOUR_DOMAIN}/eventdetails${req.body.eventDetail.id}`,
     metadata: {
       eventId: req.body.eventDetail.id,
@@ -268,41 +267,4 @@ router.post("/create-checkout-session", async (req, res) => {
 
   res.json(session.id);
 });
-
-//stripe webhook
-router.post("/webhook", extractUserIdFromToken, async (request, response) => {
-  const sig = request.headers["stripe-signature"];
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(
-      request.body,
-      sig as string,
-      endpointSecret
-    );
-  } catch (err) {
-    response.status(400).send(`Webhook Error: ${err}`);
-  }
-
-  if (!event) {
-    return response.status(400).send(`Webhook Error:`);
-  }
-
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    if (!session.metadata) {
-      return response.status(400).send(`Webhook Error:`);
-    }
-    const userId = request.userId;
-    const eventId = parseInt(session.metadata.eventId);
-    try {
-      await registerEvent(userId as number, eventId);
-      console.log(`User ${userId} registered for event ${eventId}`);
-    } catch (err) {
-      console.error("Error adding registration to database:", err);
-    }
-  }
-  response.json({ received: true });
-});
-
 export default router;

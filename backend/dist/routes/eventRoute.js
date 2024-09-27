@@ -238,7 +238,7 @@ router.post("/create-checkout-session", (req, res) => __awaiter(void 0, void 0, 
             },
         ],
         mode: "payment",
-        success_url: `${YOUR_DOMAIN}/`,
+        success_url: `${YOUR_DOMAIN}`,
         cancel_url: `${YOUR_DOMAIN}/eventdetails${req.body.eventDetail.id}`,
         metadata: {
             eventId: req.body.eventDetail.id,
@@ -246,35 +246,5 @@ router.post("/create-checkout-session", (req, res) => __awaiter(void 0, void 0, 
         client_reference_id: req.headers.token,
     });
     res.json(session.id);
-}));
-//stripe webhook
-router.post("/webhook", authenticate_1.extractUserIdFromToken, (request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    const sig = request.headers["stripe-signature"];
-    let event;
-    try {
-        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-    }
-    catch (err) {
-        response.status(400).send(`Webhook Error: ${err}`);
-    }
-    if (!event) {
-        return response.status(400).send(`Webhook Error:`);
-    }
-    if (event.type === "checkout.session.completed") {
-        const session = event.data.object;
-        if (!session.metadata) {
-            return response.status(400).send(`Webhook Error:`);
-        }
-        const userId = request.userId;
-        const eventId = parseInt(session.metadata.eventId);
-        try {
-            yield (0, registerController_1.registerEvent)(userId, eventId);
-            console.log(`User ${userId} registered for event ${eventId}`);
-        }
-        catch (err) {
-            console.error("Error adding registration to database:", err);
-        }
-    }
-    response.json({ received: true });
 }));
 exports.default = router;
