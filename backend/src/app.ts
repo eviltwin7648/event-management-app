@@ -1,4 +1,5 @@
 import express from "express";
+import jwt from "jsonwebtoken";
 import cors from "cors";
 import userRoute from "./routes/userRoute";
 import eventsRoute from "./routes/eventRoute";
@@ -7,6 +8,7 @@ import path from "path";
 import { extractUserIdFromToken } from "./middlewares/authenticate";
 import Stripe from "stripe";
 import { registerEvent } from "./controllers/registerController";
+require("dotenv").config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET as string);
 
@@ -15,7 +17,7 @@ const endpointSecret = process.env.WEBHOOK_SECRET as string;
 const app = express();
 
 
-app.use(cors({ origin: "https://event-management-app-eight.vercel.app" }));
+app.use(cors({ origin: process.env.YOUR_DOMAIN }));
 
 app.use((req, res, next) => {
   if (req.originalUrl === '/webhook') {
@@ -35,12 +37,17 @@ app.use("/events", eventsRoute);
 app.post(
   "/webhook",
   express.raw({ type: "application/json" }),
-  extractUserIdFromToken,
   async (request, response) => {
     const sig = request.headers["stripe-signature"];
     if (!sig) {
       return response.status(400).send("Missing Stripe signature");
     }
+    const bodyString = request.body.toString("utf8"); //body comes raw cause stripe has to do signature verification
+    const decode = jwt.verify(process.env.JWT_SCERET as string, bodyString.data.client_reference_id) as {
+      userId: string;
+    }
+
+    console.log("Converted Request Body:", bodyString);
 
     let event;
 
@@ -60,12 +67,12 @@ app.post(
     // Handle the event types
     if (event.type === "checkout.session.completed") {
       const session = event.data.object; // TypeScript type for session object
-
+      console.log(session)
       if (!session.metadata) {
         return response.status(400).send("Missing metadata in session");
       }
 
-      const userId = request.userId; // Extracted from the token by middleware
+      const userId = Number(decode.userId); //  
       const eventId = parseInt(session.metadata.eventId);
 
       // Ensure userId and eventId are valid
@@ -88,7 +95,7 @@ app.post(
   }
 );
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, () => {
   console.log("Server is up and running on PORT:" + PORT);

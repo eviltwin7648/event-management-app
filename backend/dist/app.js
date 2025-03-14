@@ -24,8 +24,15 @@ const registerController_1 = require("./controllers/registerController");
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET);
 const endpointSecret = process.env.WEBHOOK_SECRET;
 const app = (0, express_1.default)();
-app.use(express_1.default.json());
-app.use((0, cors_1.default)({ origin: "https://event-management-app-eight.vercel.app" }));
+app.use((0, cors_1.default)({ origin: "http://localhost:5173" }));
+app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook') {
+        next(); // Skip express.json() for /webhook
+    }
+    else {
+        express_1.default.json()(req, res, next); // Apply express.json() to other routes
+    }
+});
 app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "../uploads")));
 console.log(path_1.default.join(__dirname, "./uploads"));
 app.use("/user", userRoute_1.default);

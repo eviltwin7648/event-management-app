@@ -24,7 +24,6 @@ const stripe_1 = __importDefault(require("stripe"));
 const fs_1 = __importDefault(require("fs"));
 require("dotenv").config();
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET);
-const endpointSecret = process.env.WEBHOOK_SECRET;
 //multer to handle image upload
 const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({ storage: storage }).single("image");
