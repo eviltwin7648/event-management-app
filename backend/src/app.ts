@@ -5,7 +5,6 @@ import userRoute from "./routes/userRoute";
 import eventsRoute from "./routes/eventRoute";
 require("dotenv").config();
 import path from "path";
-import { extractUserIdFromToken } from "./middlewares/authenticate";
 import Stripe from "stripe";
 import { registerEvent } from "./controllers/registerController";
 require("dotenv").config();
@@ -46,8 +45,6 @@ app.post(
     const decode = jwt.verify(process.env.JWT_SCERET as string, bodyString.data.client_reference_id) as {
       userId: string;
     }
-
-    console.log("Converted Request Body:", bodyString);
 
     let event;
 

@@ -9,7 +9,6 @@ import {
 } from "../controllers/eventController";
 import {
   authenticate,
-  extractUserIdFromToken,
 } from "../middlewares/authenticate";
 import { authorizeOrganizer } from "../middlewares/authorizeOrganizer";
 import {
