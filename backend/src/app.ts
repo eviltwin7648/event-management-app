@@ -41,8 +41,8 @@ app.post(
     if (!sig) {
       return response.status(400).send("Missing Stripe signature");
     }
-    const bodyString = request.body.toString("utf8"); //body comes raw cause stripe has to do signature verification
-    const decode = jwt.verify(process.env.JWT_SCERET as string, bodyString.data.client_reference_id) as {
+    const bodyObject = JSON.parse(request.body.toString("utf8") )//body comes raw cause stripe has to do signature verification
+    const decode = jwt.verify(process.env.JWT_SCERET as string, bodyObject.data.client_reference_id) as {
       userId: string;
     }
 
@@ -60,7 +60,7 @@ app.post(
     if (!event) {
       return response.status(400).send("Invalid event");
     }
-
+    
     // Handle the event types
     if (event.type === "checkout.session.completed") {
       const session = event.data.object; // TypeScript type for session object
