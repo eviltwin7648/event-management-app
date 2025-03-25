@@ -44,4 +44,14 @@ jobs:
             sudo docker pull eviltwin7648/eventapp-backend:latest
             sudo docker stop eventapp-backend || true
             sudo docker rm eventapp-backend || true
-            sudo docker run --env-file eventapp-backend/.env -d --name eventapp-backend -p 3000:3000 eviltwin7648/eventapp-backend:latest
+            sudo docker system prune -af
+            sudo docker run -d --name eventapp-backend -p 3000:3000 \
+              -e PORT=3000 \
+              -e WEBHOOK_SECRET=${{ secrets.WEBHOOK_SECRET }} \
+              -e STRIPE_SECRET=${{ secrets.STRIPE_SECRET }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e YOUR_DOMAIN=${{ secrets.YOUR_DOMAIN }} \
+              -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+              --restart unless-stopped \
+              eviltwin7648/eventapp-backend:latest
+

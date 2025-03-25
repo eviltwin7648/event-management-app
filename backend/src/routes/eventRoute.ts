@@ -261,7 +261,7 @@ router.post("/create-checkout-session", async (req, res) => {
     metadata: {
       eventId: req.body.eventDetail.id,
     },
-    client_reference_id: req.headers.token as string,
+    client_reference_id: `userId`.toString(), 
   });
 
   res.json(session.id);

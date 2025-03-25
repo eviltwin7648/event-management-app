@@ -44,4 +44,5 @@ jobs:
             sudo docker pull eviltwin7648/eventapp-frontend:latest
             sudo docker stop eventapp-frontend || true
             sudo docker rm eventapp-frontend || true
-            sudo docker run --env-file eventapp-frontend/.env -d --name eventapp-frontend -p 5173:5173 eviltwin7648/eventapp-frontend:latest
+            sudo docker system prune -af
+            sudo docker run -e VITE_API_URL=${{ secrets.VITE_API_URL }} -e VITE_STRIPE_SECRET=${{ secrets.VITE_STRIPE_SECRET }} -d --name eventapp-frontend -p 5173:5173 eviltwin7648/eventapp-frontend:latest

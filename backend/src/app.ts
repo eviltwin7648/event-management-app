@@ -7,7 +7,6 @@ require("dotenv").config();
 import path from "path";
 import Stripe from "stripe";
 import { registerEvent } from "./controllers/registerController";
-require("dotenv").config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET as string);
 
@@ -41,10 +40,7 @@ app.post(
     if (!sig) {
       return response.status(400).send("Missing Stripe signature");
     }
-    const bodyObject = JSON.parse(request.body.toString("utf8") )//body comes raw cause stripe has to do signature verification
-    const decode = jwt.verify(process.env.JWT_SCERET as string, bodyObject.data.client_reference_id) as {
-      userId: string;
-    }
+
 
     let event;
 
@@ -69,7 +65,7 @@ app.post(
         return response.status(400).send("Missing metadata in session");
       }
 
-      const userId = Number(decode.userId); //  
+      const userId = Number(session.client_reference_id);  //  
       const eventId = parseInt(session.metadata.eventId);
 
       // Ensure userId and eventId are valid
