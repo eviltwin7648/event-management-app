@@ -29,7 +29,7 @@ router.post("/register", async (req, res) => {
     }
     const user = await createNewUser(req.body);
     const userId = user.id;
-    const token = jwt.sign({ userId }, process.env.JWT_SCERET as string);
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET as string);
     res.status(200).json({ message: "User Created Successfully", token });
   } catch (error) {
     console.error("Error Occured", error);
@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
       });
     }
     const userId = user.id;
-    const token = jwt.sign({ userId }, process.env.JWT_SCERET as string);
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET as string);
 
     res.status(200).json({ message: "Logged In successfully", token });
   } catch (error) {

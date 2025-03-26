@@ -19,7 +19,7 @@ export const authenticate = function (
     console.log(req.body);
 
     const token = authHeader.split(" ")[1];
-    const decode = jwt.verify(token, process.env.JWT_SCERET as string) as {
+    const decode = jwt.verify(token, process.env.JWT_SECRET as string) as {
       userId: string;
     };
     req.userId = parseInt(decode.userId);
