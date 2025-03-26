@@ -15,7 +15,10 @@ const endpointSecret = process.env.WEBHOOK_SECRET as string;
 const app = express();
 
 
-app.use(cors({ origin: "https://events.vishalrai.tech/" }));
+app.use(cors({
+  origin: "https://events.vishalrai.tech",
+  credentials: true
+}));
 
 app.use((req, res, next) => {
   if (req.originalUrl === '/webhook') {
@@ -56,7 +59,7 @@ app.post(
     if (!event) {
       return response.status(400).send("Invalid event");
     }
-    
+
     // Handle the event types
     if (event.type === "checkout.session.completed") {
       const session = event.data.object; // TypeScript type for session object
