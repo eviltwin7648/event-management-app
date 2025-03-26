@@ -238,8 +238,11 @@ router.post("/:id/unrsvp", authenticate, async (req, res) => {
 
 //stripe checkout route
 
-router.post("/create-checkout-session", async (req, res) => {
+router.post("/create-checkout-session",authenticate, async (req, res) => {
   const YOUR_DOMAIN = process.env.YOUR_DOMAIN;
+  if (!req.userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -257,11 +260,11 @@ router.post("/create-checkout-session", async (req, res) => {
     ],
     mode: "payment",
     success_url: `${YOUR_DOMAIN}`,
-    cancel_url: `${YOUR_DOMAIN}/eventdetails${req.body.eventDetail.id}`,
+    cancel_url: `${YOUR_DOMAIN}/eventdetails/${req.body.eventDetail.id}`,
     metadata: {
       eventId: req.body.eventDetail.id,
     },
-    client_reference_id: `userId`.toString(), 
+    client_reference_id: req.userId.toString(), 
   });
 
   res.json(session.id);
