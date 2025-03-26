@@ -15,7 +15,7 @@ const endpointSecret = process.env.WEBHOOK_SECRET as string;
 const app = express();
 
 
-app.use(cors({ origin: process.env.YOUR_DOMAIN }));
+app.use(cors({ origin: "https://events.vishalrai.tech/" }));
 
 app.use((req, res, next) => {
   if (req.originalUrl === '/webhook') {
