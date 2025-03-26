@@ -51,7 +51,7 @@ const EventDetails = () => {
       },
       {
         headers: {
-          token,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
