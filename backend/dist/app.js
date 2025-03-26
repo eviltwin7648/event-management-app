@@ -18,13 +18,12 @@ const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const eventRoute_1 = __importDefault(require("./routes/eventRoute"));
 require("dotenv").config();
 const path_1 = __importDefault(require("path"));
-const authenticate_1 = require("./middlewares/authenticate");
 const stripe_1 = __importDefault(require("stripe"));
 const registerController_1 = require("./controllers/registerController");
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET);
 const endpointSecret = process.env.WEBHOOK_SECRET;
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)({ origin: "http://localhost:5173" }));
+app.use((0, cors_1.default)({ origin: "https://events.vishalrai.tech/" }));
 app.use((req, res, next) => {
     if (req.originalUrl === '/webhook') {
         next(); // Skip express.json() for /webhook
@@ -38,7 +37,7 @@ console.log(path_1.default.join(__dirname, "./uploads"));
 app.use("/user", userRoute_1.default);
 app.use("/events", eventRoute_1.default);
 //stripe webhook
-app.post("/webhook", express_1.default.raw({ type: "application/json" }), authenticate_1.extractUserIdFromToken, (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/webhook", express_1.default.raw({ type: "application/json" }), (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     const sig = request.headers["stripe-signature"];
     if (!sig) {
         return response.status(400).send("Missing Stripe signature");
@@ -59,10 +58,11 @@ app.post("/webhook", express_1.default.raw({ type: "application/json" }), authen
     // Handle the event types
     if (event.type === "checkout.session.completed") {
         const session = event.data.object; // TypeScript type for session object
+        console.log(session);
         if (!session.metadata) {
             return response.status(400).send("Missing metadata in session");
         }
-        const userId = request.userId; // Extracted from the token by middleware
+        const userId = Number(session.client_reference_id); //  
         const eventId = parseInt(session.metadata.eventId);
         // Ensure userId and eventId are valid
         if (!userId || isNaN(eventId)) {
@@ -81,7 +81,7 @@ app.post("/webhook", express_1.default.raw({ type: "application/json" }), authen
     // Send response to Stripe
     response.json({ received: true });
 }));
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, () => {
     console.log("Server is up and running on PORT:" + PORT);
 });

@@ -242,7 +242,7 @@ router.post("/create-checkout-session", (req, res) => __awaiter(void 0, void 0, 
         metadata: {
             eventId: req.body.eventDetail.id,
         },
-        client_reference_id: req.headers.token,
+        client_reference_id: `userId`.toString(),
     });
     res.json(session.id);
 }));
