@@ -23,7 +23,10 @@ const registerController_1 = require("./controllers/registerController");
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET);
 const endpointSecret = process.env.WEBHOOK_SECRET;
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)({ origin: "https://events.vishalrai.tech/" }));
+app.use((0, cors_1.default)({
+    origin: "https://events.vishalrai.tech",
+    credentials: true
+}));
 app.use((req, res, next) => {
     if (req.originalUrl === '/webhook') {
         next(); // Skip express.json() for /webhook
