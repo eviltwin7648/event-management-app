@@ -53,6 +53,7 @@ const LoginPage = () => {
             </button>
           </div>
         </form>
+      <HoverCard/>
       </div>
       <div
         className="relative flex flex-col w-2/5 justify-center items-center text-white"
@@ -85,3 +86,27 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+
+
+function HoverCard(){
+   const[isHovered, setIsHoverd] = useState(false)   
+  return(
+      <>
+      <p className="text-xs underline cursor-pointer"
+      onMouseLeave={()=>setIsHoverd(false)}
+      onClick={()=>setIsHoverd(true)}>testing the application?</p>
+      { isHovered && (
+        <div className="w-80 rounded-lg bg-white p-4 shadow-lg border border-gray-200">
+            <p>
+          Username: raivishal@gmail.com
+        </p>
+        <p>
+        Password: Vishal
+        </p>
+      </div>
+        )
+      }
+      </>
+    )
+}
